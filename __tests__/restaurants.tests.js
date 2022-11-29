@@ -88,6 +88,14 @@ describe('user routes', () => {
     };
     const [agentAdmin, userAdmin] = await registerAndLogin(mockAdmin);
 
+    const res1 = await agentAdmin.delete('/api/v1/reviews1');
+    expect(res1.body).toMatchInlineSnapshot(`
+    Object {
+      "message": "Review deleted",
+      "success": true,
+    }
+  `);
+
     const agent = request.agent(app);
     await agent.post('/api/v1/users/sessions').send({
       email: 'fakeemail@example.com',
