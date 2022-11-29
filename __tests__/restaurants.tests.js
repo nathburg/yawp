@@ -66,7 +66,7 @@ describe('user routes', () => {
     const res1 = request(app)
       .post('/api/v1/restaurants/2/reviews')
       .send({ userID: user.id, detail: 'Manageable diarrhea' });
-    expect(res1.body).toMatchInlineSnapshot(`undefined`);
+    expect(res1.body).toMatchInlineSnapshot('undefined');
 
     const res2 = await agent
       .post('/api/v1/restaurants/2/reviews')
@@ -79,23 +79,31 @@ describe('user routes', () => {
       }
     `);
   });
-  test('DELETE /api/v1/reviews/:id deletes reviews if admin or user who posted review', async () => {
+
+  test('DELETE /api/v1/reviews/:id fails if user is not logged in', async () => {
+    const res = request(app).delete('api/v1/reviews/1');
+    expect(res.body).toMatchInlineSnapshot('undefined');
+  });
+
+  test('DELETE /api/v1/reviews/:id deletes reviews if admin', async () => {
     const mockAdmin = {
       firstName: 'admin',
       lastName: 'admin',
       email: 'admin',
       password: '12345',
     };
-    const [agentAdmin, userAdmin] = await registerAndLogin(mockAdmin);
+    const [agentAdmin] = await registerAndLogin(mockAdmin);
 
-    const res1 = await agentAdmin.delete('/api/v1/reviews1');
+    const res1 = await agentAdmin.delete('/api/v1/reviews/1');
     expect(res1.body).toMatchInlineSnapshot(`
-    Object {
-      "message": "Review deleted",
-      "success": true,
-    }
-  `);
+      Object {
+        "message": "Review deleted",
+        "success": true,
+      }
+    `);
+  });
 
+  test('DELETE /api/v1/reviews/:id deletes reviews if user who posted review', async () => {
     const agent = request.agent(app);
     await agent.post('/api/v1/users/sessions').send({
       email: 'fakeemail@example.com',
