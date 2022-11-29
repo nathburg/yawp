@@ -27,8 +27,21 @@ describe('user routes', () => {
     `);
   });
 
-  test('GET /api/v1/restaurants/:id returns detail of restaurant with nested list of reviews', () => {
-    const res = await request(app).get('/api/v1/restaurants/1')
+  test('GET /api/v1/restaurants/:id returns detail of restaurant with nested list of reviews', async () => {
+    const res = await request(app).get('/api/v1/restaurants/1');
+    expect(res.body).toMatchInlineSnapshot(`
+      Object {
+        "id": "1",
+        "name": "McDonalds",
+        "reviews": Array [
+          Object {
+            "detail": "Extraordinary diarrhea",
+            "id": "1",
+            "userID": "1",
+          },
+        ],
+      }
+    `);
   });
 
   test.skip('POST /api/v1/restaurants/id/reviews adds new review for restaurant and is protected by authentication', () => {});
