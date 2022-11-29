@@ -28,7 +28,7 @@ CREATE TABLE reviews (
 
 INSERT INTO
   users (email, password_hash, first_name, last_name)
-VALUES ('fakeemail@example.com', 'notarealhash', 'Nathan', 'Burgess');
+VALUES ('fakeemail@example.com', '$2b$10$1pCfFETNpu.cAcIuOP9xMOONZSdWP6Sf6DI/JvmQQ5gx2KkHZhgGi', 'Nathan', 'Burgess');
 
 INSERT INTO 
   restaurants (name)

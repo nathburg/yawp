@@ -61,24 +61,6 @@ describe('user routes', () => {
     `);
   });
 
-  test('DELETE /api/v1/reviews/:id deletes reviews if admin or user who posted review', async () => {
-    const mockAdmin = {
-      firstName: 'admin',
-      lastName: 'admin',
-      email: 'admin',
-      password: '12345',
-    };
-    const [agent, user] = await registerAndLogin(mockAdmin);
-
-    const res = await request(app).delete('/api/v1/reviews/1');
-    expect(res.body).toMatchInlineSnapshot(`
-      Object {
-        "message": "Review deleted",
-        "success": true,
-      }
-    `);
-  });
-
   test('POST /api/v1/restaurants/:id/reviews adds new review for restaurant and is protected by authentication', async () => {
     const [agent, user] = await registerAndLogin();
     const res1 = request(app)
@@ -96,5 +78,27 @@ describe('user routes', () => {
         "userID": "2",
       }
     `);
+  });
+  test('DELETE /api/v1/reviews/:id deletes reviews if admin or user who posted review', async () => {
+    const mockAdmin = {
+      firstName: 'admin',
+      lastName: 'admin',
+      email: 'admin',
+      password: '12345',
+    };
+    const [agentAdmin, userAdmin] = await registerAndLogin(mockAdmin);
+
+    const agent = request.agent(app);
+    await agent.post('/api/v1/users/sessions').send({
+      email: 'fakeemail@example.com',
+      password: 'password',
+    });
+    const res = await agent.delete('/api/v1/reviews/1');
+    expect(res.body).toMatchInlineSnapshot(`
+        Object {
+          "message": "Review deleted",
+          "success": true,
+        }
+      `);
   });
 });
