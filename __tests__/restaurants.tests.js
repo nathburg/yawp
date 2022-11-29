@@ -27,7 +27,9 @@ describe('user routes', () => {
     `);
   });
 
-  test.skip('GET /api/v1/restaurants/:id returns detail of restaurant with nested list of reviews', () => {});
+  test('GET /api/v1/restaurants/:id returns detail of restaurant with nested list of reviews', () => {
+    const res = await request(app).get('/api/v1/restaurants/1')
+  });
 
   test.skip('POST /api/v1/restaurants/id/reviews adds new review for restaurant and is protected by authentication', () => {});
 
