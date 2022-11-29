@@ -63,10 +63,15 @@ describe('user routes', () => {
 
   test('POST /api/v1/restaurants/:id/reviews adds new review for restaurant and is protected by authentication', async () => {
     const [agent, user] = await registerAndLogin();
-    const res1 = request(app)
+    const res1 = await request(app)
       .post('/api/v1/restaurants/2/reviews')
       .send({ userID: user.id, detail: 'Manageable diarrhea' });
-    expect(res1.body).toMatchInlineSnapshot('undefined');
+    expect(res1.body).toMatchInlineSnapshot(`
+      Object {
+        "message": "You must be signed in to continue",
+        "status": 401,
+      }
+    `);
 
     const res2 = await agent
       .post('/api/v1/restaurants/2/reviews')
@@ -81,8 +86,13 @@ describe('user routes', () => {
   });
 
   test('DELETE /api/v1/reviews/:id fails if user is not logged in', async () => {
-    const res = request(app).delete('api/v1/reviews/1');
-    expect(res.body).toMatchInlineSnapshot('undefined');
+    const res = await request(app).delete('/api/v1/reviews/1');
+    expect(res.body).toMatchInlineSnapshot(`
+      Object {
+        "message": "You must be signed in to continue",
+        "status": 401,
+      }
+    `);
   });
 
   test('DELETE /api/v1/reviews/:id deletes reviews if admin', async () => {
@@ -104,7 +114,7 @@ describe('user routes', () => {
   });
 
   test('DELETE /api/v1/reviews/:id deletes reviews if user who posted review', async () => {
-    const agent = request.agent(app);
+    const agent = await request.agent(app);
     await agent.post('/api/v1/users/sessions').send({
       email: 'fakeemail@example.com',
       password: 'password',
